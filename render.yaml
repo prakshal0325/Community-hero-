@@ -1,0 +1,61 @@
+services:
+  # Backend Web Service
+  - type: web
+    name: community-hero-backend
+    env: node
+    plan: free
+    region: oregon
+    buildCommand: cd backend && npm install --production=false && npx prisma generate
+    startCommand: cd backend && npx tsx src/index.ts
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: community-hero-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: JWT_REFRESH_EXPIRES_IN
+        value: 30d
+      - key: RATE_LIMIT_WINDOW_MS
+        value: "900000"
+      - key: RATE_LIMIT_MAX_REQUESTS
+        value: "10000"
+      - key: FRONTEND_URL
+        fromService:
+          name: community-hero-frontend
+          property: host
+
+  # Frontend Web Service
+  - type: web
+    name: community-hero-frontend
+    env: node
+    plan: free
+    region: oregon
+    buildCommand: cd frontend && npm install --production=false && npm run build
+    startCommand: cd frontend && npm start
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          name: community-hero-backend
+          property: host
+          path: /api/v1
+      - key: NEXT_PUBLIC_SOCKET_URL
+        fromService:
+          name: community-hero-backend
+          property: host
+      - key: NEXT_PUBLIC_APP_NAME
+        value: Community Hero
+      - key: NEXT_PUBLIC_APP_DESCRIPTION
+        value: AI-Powered Hyperlocal Problem Solver
+
+databases:
+  - name: community-hero-db
+    plan: free
+    region: oregon
+    postgresMajorVersion: "16"
