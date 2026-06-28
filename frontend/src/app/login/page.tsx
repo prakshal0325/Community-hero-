@@ -37,26 +37,6 @@ export default function LoginPage() {
     toast.info('Google OAuth requires server-side configuration. Set GOOGLE_CLIENT_ID in .env to enable.');
   };
 
-  const handleDemoLogin = async (role: string) => {
-    setIsLoading(true);
-    try {
-      const credentials: Record<string, { email: string; password: string }> = {
-        citizen: { email: 'citizen@communityhero.app', password: 'Password@123' },
-        officer: { email: 'officer@communityhero.app', password: 'Password@123' },
-        admin: { email: 'admin@communityhero.app', password: 'Password@123' },
-      };
-      const cred = credentials[role];
-      await login(cred.email, cred.password);
-      toast.success(`Logged in as ${role}`);
-      if (role === 'admin') router.push('/dashboard/admin');
-      else if (role === 'officer') router.push('/dashboard/officer');
-      else router.push('/dashboard/citizen');
-    } catch (error: any) {
-      toast.error('Demo login failed. Make sure the database is seeded.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden">
@@ -157,30 +137,6 @@ export default function LoginPage() {
             </button>
           </div>
 
-          {/* Demo Login */}
-          <div className="mt-5">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-border" />
-              </div>
-              <div className="relative flex justify-center text-xs">
-                <span className="px-4 bg-card text-muted-foreground">Quick Demo Login</span>
-              </div>
-            </div>
-
-            <div className="mt-4 grid grid-cols-3 gap-2">
-              {(['citizen', 'officer', 'admin'] as const).map((role) => (
-                <button
-                  key={role}
-                  onClick={() => handleDemoLogin(role)}
-                  disabled={isLoading}
-                  className="px-3 py-2 text-xs font-medium border border-border rounded-lg hover:bg-accent transition-colors capitalize disabled:opacity-50"
-                >
-                  {role}
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
 
         <p className="text-center mt-6 text-sm text-muted-foreground">
