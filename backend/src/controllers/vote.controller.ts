@@ -8,7 +8,7 @@ export class VoteController {
     try {
       if (!req.user) { res.status(401).json({ error: 'Not authenticated' }); return; }
 
-      const { complaintId } = req.params;
+      const { complaintId } = req.params as { complaintId: string };
       const { type } = req.body; // VERIFY, REJECT, FLAG
 
       // Check complaint exists
@@ -73,7 +73,7 @@ export class VoteController {
 
   static async getVotes(req: AuthRequest, res: Response) {
     try {
-      const { complaintId } = req.params;
+      const { complaintId } = req.params as { complaintId: string };
       const votes = await prisma.vote.findMany({
         where: { complaintId },
         include: { user: { select: { id: true, name: true, avatar: true } } },

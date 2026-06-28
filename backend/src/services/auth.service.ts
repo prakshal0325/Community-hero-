@@ -28,11 +28,11 @@ interface TokenPayload {
 
 export class AuthService {
   static generateAccessToken(payload: TokenPayload): string {
-    return jwt.sign(payload, env.JWT_SECRET, { expiresIn: env.JWT_EXPIRES_IN });
+    return jwt.sign(payload, env.JWT_SECRET, { expiresIn: env.JWT_EXPIRES_IN as any });
   }
 
   static generateRefreshToken(payload: TokenPayload): string {
-    return jwt.sign(payload, env.JWT_REFRESH_SECRET, { expiresIn: env.JWT_REFRESH_EXPIRES_IN });
+    return jwt.sign(payload, env.JWT_REFRESH_SECRET, { expiresIn: env.JWT_REFRESH_EXPIRES_IN as any });
   }
 
   static async register(input: RegisterInput) {
