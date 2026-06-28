@@ -204,13 +204,32 @@ export default function LandingPage() {
 
           {/* Live Issue Categories */}
           <div className="grid grid-cols-4 sm:grid-cols-8 gap-3 max-w-3xl mx-auto">
-            {issueCategories.map((cat, i) => (
-              <div key={i} className="flex flex-col items-center gap-1 p-3 rounded-xl glass hover:glow-sm transition-all cursor-default group">
-                <span className="text-2xl group-hover:scale-110 transition-transform">{cat.icon}</span>
-                <span className="text-[10px] text-muted-foreground font-medium">{cat.label}</span>
-                <span className="text-[10px] text-violet-400 font-mono">{cat.count}</span>
-              </div>
-            ))}
+            {issueCategories.map((cat, i) => {
+              const categoryMapping: Record<string, string> = {
+                'Potholes': 'POTHOLE',
+                'Garbage': 'GARBAGE',
+                'Water Leakage': 'WATER_LEAKAGE',
+                'Streetlights': 'BROKEN_STREETLIGHT',
+                'Sewage': 'SEWAGE_PROBLEM',
+                'Road Damage': 'ROAD_DAMAGE',
+                'Traffic Signals': 'TRAFFIC_SIGNAL_FAILURE',
+                'Fallen Trees': 'FALLEN_TREE'
+              };
+              const queryCategory = categoryMapping[cat.label] || 'OTHER';
+              const targetUrl = `/dashboard/citizen/report?category=${queryCategory}`;
+              return (
+                <Link
+                  key={i}
+                  href={targetUrl}
+                  className="flex flex-col items-center gap-1 p-3 rounded-xl glass hover:glow-sm hover:border-violet-500/50 hover:bg-violet-500/5 transition-all cursor-pointer group focus:outline-none focus:ring-2 focus:ring-violet-500"
+                  aria-label={`Report an issue for ${cat.label}`}
+                >
+                  <span className="text-2xl group-hover:scale-110 transition-transform" aria-hidden="true">{cat.icon}</span>
+                  <span className="text-[10px] text-muted-foreground font-medium">{cat.label}</span>
+                  <span className="text-[10px] text-violet-400 font-mono">{cat.count}</span>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>

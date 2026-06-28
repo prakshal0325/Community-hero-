@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useRef, useCallback, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { complaintsAPI } from '@/lib/api';
 import { categoryIcons, categoryLabels } from '@/lib/utils';
 import {
@@ -16,7 +16,22 @@ const categories = [
 ];
 
 export default function ReportIssuePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="w-8 h-8 text-violet-500 animate-spin" />
+      </div>
+    }>
+      <ReportIssueForm />
+    </Suspense>
+  );
+}
+
+function ReportIssueForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get('category');
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState<'upload' | 'analyzing' | 'review' | 'submitting'>('upload');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -28,6 +43,13 @@ export default function ReportIssuePage() {
     estimatedCost: 0, estimatedTime: '', aiConfidence: 0, aiTags: [] as string[],
   });
   const [locationLoading, setLocationLoading] = useState(false);
+
+  // Pre-populate category from query parameter if present
+  useEffect(() => {
+    if (categoryParam && categories.includes(categoryParam)) {
+      setForm(prev => ({ ...prev, category: categoryParam }));
+    }
+  }, [categoryParam]);
 
   // Get GPS location
   const getLocation = useCallback(() => {
