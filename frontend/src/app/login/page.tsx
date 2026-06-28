@@ -20,10 +20,9 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await login(email, password);
+      const loggedInUser = await login(email, password);
       toast.success('Welcome back!');
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const role = user?.role;
+      const role = loggedInUser?.role;
       if (role === 'ADMIN') router.push('/dashboard/admin');
       else if (role === 'OFFICER') router.push('/dashboard/officer');
       else router.push('/dashboard/citizen');

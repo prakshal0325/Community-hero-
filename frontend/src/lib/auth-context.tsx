@@ -20,7 +20,7 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<any>;
   register: (data: { email: string; password: string; name: string; phone?: string }) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
@@ -30,7 +30,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   isLoading: true,
   isAuthenticated: false,
-  login: async () => {},
+  login: async () => { return null; },
   register: async () => {},
   logout: () => {},
   refreshUser: async () => {},
@@ -66,6 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('accessToken', data.accessToken);
     localStorage.setItem('refreshToken', data.refreshToken);
     setUser(data.user);
+    return data.user;
   };
 
   const register = async (registerData: { email: string; password: string; name: string; phone?: string }) => {
